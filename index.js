@@ -1,4 +1,5 @@
 const express = require("express");
+const init = require("./init");
 const router = require("./router");
 const app = express();
 app.use(express.json());
@@ -20,5 +21,9 @@ app.use((err, req, res, next) => {
 	});
 });
 
-const { PORT } = process.env;
-app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+(async function start() {
+	await init();
+
+	const { PORT } = process.env;
+	app.listen(PORT, () => console.log(`Server started on ${PORT}`));
+})();
