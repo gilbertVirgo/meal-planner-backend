@@ -3,7 +3,7 @@ const fs = require("fs");
 const init = async () => {
 	const baseURL = "./data";
 
-	for (const title of ["ingredients", "plans", "recipes"]) {
+	for (const title of ["ingredients", "plan", "recipes"]) {
 		const fileURL = `${baseURL}/${title}.json`;
 
 		if (

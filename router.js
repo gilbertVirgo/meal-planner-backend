@@ -50,6 +50,9 @@ const defaultPlanId = "the-plan";
 
 router.get("/plan", async (req, res, next) => {
 	Plan.findOne(defaultPlanId)
+		.then((plan) => {
+			res.locals.data = plan;
+		})
 		.catch(() => {
 			Plan.insertOne({
 				id: defaultPlanId,
