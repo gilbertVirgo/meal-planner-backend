@@ -20,4 +20,5 @@ app.use((err, req, res, next) => {
 	});
 });
 
-app.listen(5000, () => console.log(`Server started on 5000`));
+const { PORT } = process.env;
+app.listen(PORT, () => console.log(`Server started on ${PORT}`));
