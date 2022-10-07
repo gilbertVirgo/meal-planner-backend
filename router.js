@@ -46,21 +46,26 @@ router.get("/ingredient/:id", async ({ params }, res, next) => {
 	next();
 });
 
+const defaultPlanId = "the-plan";
+
 router.get("/plan", async (req, res, next) => {
-	res.locals.data = await Plan.findOne(getPlanId(), {
-		insertIfNotFound: true,
-	});
-	next();
+	Plan.findOne(defaultPlanId)
+		.catch(() => {
+			Plan.insertOne({
+				id: defaultPlanId,
+			});
+		})
+		.finally(next);
 });
 
 router.get("/plan/recipes", async (req, res, next) => {
-	const { recipes } = await Plan.findOne(getPlanId());
+	const { recipes } = await Plan.findOne(defaultPlanId);
 	res.locals.data = await Recipe.find(recipes);
 	next();
 });
 
 router.get("/plan/ingredients", async (req, res, next) => {
-	const plan = await Plan.findOne(getPlanId()),
+	const plan = await Plan.findOne(defaultPlanId),
 		recipes = await Recipe.find(plan.recipes.filter((r) => !!r)),
 		ingredientIds = [
 			...new Set(
@@ -74,8 +79,8 @@ router.get("/plan/ingredients", async (req, res, next) => {
 	next();
 });
 
-router.patch("/plan", async ({ body: { id, recipes } }, res, next) => {
-	await Plan.updateOne({ id: getPlanId(), id, recipes });
+router.patch("/plan", async ({ body: { recipes } }, res, next) => {
+	await Plan.updateOne({ id: defaultPlanId, recipes });
 	res.locals.data = undefined;
 	next();
 });

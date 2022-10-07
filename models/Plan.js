@@ -1,5 +1,5 @@
 const Model = require("../Model");
 let id,
-	recipes = [null, null, null, null, null, null, null];
+	recipes = Array(7).fill(null);
 
-module.exports = new Model("plans.json", { id, recipes });
+module.exports = new Model("plan.json", { id, recipes });

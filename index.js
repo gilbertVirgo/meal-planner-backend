@@ -11,8 +11,6 @@ app.use((req, res, next) => {
 		success: true,
 		data: res.locals.data,
 	});
-
-	// next();
 });
 app.use((err, req, res, next) => {
 	res.status(500).json({
