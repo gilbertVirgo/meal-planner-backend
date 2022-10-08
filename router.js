@@ -81,6 +81,20 @@ router.get("/plan/ingredients", async (req, res, next) => {
 	next();
 });
 
+router.get("/plan/checklist", async (req, res, next) => {
+	const plan = await Plan.findOne(defaultPlanId),
+		recipes = await Recipe.find(plan.recipes.filter((r) => !!r)),
+		ingredientIds = [
+			...new Set(
+				recipes
+					.map(({ ingredients }) =>
+						ingredients.map(({ id, amount, unit }) => id)
+					)
+					.flat(1)
+			),
+		];
+});
+
 router.patch("/plan", async ({ body: { recipes } }, res, next) => {
 	await Plan.updateOne({ id: defaultPlanId, recipes });
 	res.locals.data = undefined;
