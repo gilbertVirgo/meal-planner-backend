@@ -3,6 +3,12 @@ const fs = require("fs");
 const init = async () => {
 	const baseURL = "./data";
 
+	if (!fs.existsSync(baseURL)) {
+		console.log("/data does not exist");
+		await fs.mkdirSync("data");
+		console.log("Created /data");
+	}
+
 	for (const title of ["ingredients", "plan", "recipes"]) {
 		const fileURL = `${baseURL}/${title}.json`;
 
