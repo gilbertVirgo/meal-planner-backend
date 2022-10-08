@@ -8,18 +8,21 @@ module.exports = async (localFile, key) => {
 		Key: key,
 	};
 
-	new Promise((resolve, reject) => {
-		s3.deleteObject(params, function (err) {
-			if (err) reject(err);
+	new Promise(async (resA, rejA) => {
+		await new Promise((resB) => {
+			s3.deleteObject(params, function (err) {
+				if (err) rejA(err);
 
-			console.log(`S3: Deleted file ${key}`);
+				console.log(`S3: Deleted file ${key}`);
+				resB();
+			});
 		});
 
 		s3.putObject({ Body: localFile, ...params }, function (err, data) {
-			if (err) reject(err);
+			if (err) return rejA(err);
 
 			console.log(`S3: Uploaded file ${key}`);
-			resolve(data);
+			resA(data);
 		});
 	});
 };
