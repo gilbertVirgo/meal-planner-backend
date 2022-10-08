@@ -1,4 +1,3 @@
-const getPlanId = require("./scripts/getPlanId");
 const Ingredient = require("./models/Ingredient");
 const Recipe = require("./models/Recipe");
 
