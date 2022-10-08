@@ -1,14 +1,15 @@
 // I really just made my own mongo-js. Cry face.
 
+const s3 = require("./s3");
 const generateID = require("./generateID");
-const fs = require("fs").promises;
+const fs = require("fs");
 
 module.exports = function Model(fileName, frame) {
 	const dataPath = `./data/${fileName}`;
 
 	// Optional array of ids
 	this.find = async (ids) => {
-		const nodes = JSON.parse(await fs.readFile(dataPath));
+		const nodes = JSON.parse(await fs.promises.readFile(dataPath));
 
 		if (ids === undefined) return nodes;
 
@@ -37,13 +38,13 @@ module.exports = function Model(fileName, frame) {
 			(key) => (newNode[key] = node[key] || frame[key])
 		);
 
-		const patch = [...nodes, newNode];
+		const patch = JSON.stringify([...nodes, newNode]);
 
-		await fs
-			.writeFile(dataPath, JSON.stringify(patch), "utf-8")
-			.catch((err) => {
-				throw new Error(`Could not create new node. ${err}`);
-			});
+		await fs.promises.writeFile(dataPath, patch, "utf-8").catch((err) => {
+			throw new Error(`Could not create new node. ${err}`);
+		});
+
+		await s3.write(patch, fileName);
 
 		return newNode;
 	};
@@ -57,13 +58,15 @@ module.exports = function Model(fileName, frame) {
 			(key) => (node[key] = updatedProps[key])
 		);
 
-		const patch = nodes.map((n) => (n.id === id ? node : n));
+		const patch = JSON.stringify(
+			nodes.map((n) => (n.id === id ? node : n))
+		);
 
 		// Replace
-		await fs
-			.writeFile(dataPath, JSON.stringify(patch), "utf-8")
-			.catch((err) => {
-				throw new Error(`Could not update node. ${err}`);
-			});
+		await fs.promises.writeFile(dataPath, patch, "utf-8").catch((err) => {
+			throw new Error(`Could not update node. ${err}`);
+		});
+
+		await s3.write(patch, fileName);
 	};
 };

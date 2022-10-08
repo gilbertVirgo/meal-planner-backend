@@ -48,16 +48,8 @@ router.get("/ingredient/:id", async ({ params }, res, next) => {
 const defaultPlanId = "the-plan";
 
 router.get("/plan", async (req, res, next) => {
-	Plan.findOne(defaultPlanId)
-		.then((plan) => {
-			res.locals.data = plan;
-		})
-		.catch(() => {
-			Plan.insertOne({
-				id: defaultPlanId,
-			});
-		})
-		.finally(next);
+	res.locals.data = await Plan.findOne(defaultPlanId);
+	next();
 });
 
 router.get("/plan/recipes", async (req, res, next) => {
@@ -83,16 +75,50 @@ router.get("/plan/ingredients", async (req, res, next) => {
 
 router.get("/plan/checklist", async (req, res, next) => {
 	const plan = await Plan.findOne(defaultPlanId),
-		recipes = await Recipe.find(plan.recipes.filter((r) => !!r)),
-		ingredientIds = [
-			...new Set(
-				recipes
-					.map(({ ingredients }) =>
-						ingredients.map(({ id, amount, unit }) => id)
-					)
-					.flat(1)
-			),
-		];
+		recipes = await Recipe.find(plan.recipes.filter((r) => !!r));
+
+	res.locals.data = (function cleanIngredientsAndSortQuantities(dirty) {
+		const clean = [],
+			final = [];
+
+		dirty.forEach(({ title, id, amount, unit }) => {
+			const ingredientIndex = clean.findIndex((i) => i.id === id);
+
+			if (ingredientIndex === -1)
+				clean.push({ id, title, dirtyQuantities: [{ amount, unit }] });
+			else clean[ingredientIndex].dirtyQuantities.push({ amount, unit });
+		});
+
+		clean.forEach(({ dirtyQuantities, ...props }) => {
+			const cleanQuantities = [];
+
+			dirtyQuantities.forEach(({ unit, amount }) => {
+				const quantityIndex = cleanQuantity.findIndex(
+					(q) => q.unit === unit
+				);
+
+				if (quantityIndex === -1)
+					cleanQuantities.push({ amount, unit });
+				else {
+					cleanQuantities[quantityIndex].amount =
+						parseInt(cleanQuantities[quantityIndex].amount) +
+						amount;
+				}
+			});
+
+			const quantityString = cleanQuantities
+				.map(({ amount, unit }) => {
+					return `${amount} ${unit !== 1 ? unit : unit + "s"}`;
+				})
+				.join(", ");
+
+			final.push({ quantity: quantityString, ...props });
+		});
+
+		return final;
+	})(recipes.map(({ ingredients }) => ingredients).flat(1));
+
+	next();
 });
 
 router.patch("/plan", async ({ body: { recipes } }, res, next) => {

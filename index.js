@@ -1,5 +1,6 @@
+require("dotenv").config();
 const express = require("express");
-const init = require("./init");
+const loadBackupFromAWS = require("./loadBackupFromAWS");
 const router = require("./router");
 const app = express();
 app.use(express.json());
@@ -20,7 +21,7 @@ app.use((err, req, res, next) => {
 });
 
 (async function start() {
-	await init();
+	await loadBackupFromAWS();
 
 	const { PORT } = process.env;
 	app.listen(PORT, () => console.log(`Server started on ${PORT}`));
