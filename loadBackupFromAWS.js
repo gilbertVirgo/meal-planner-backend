@@ -1,5 +1,5 @@
 const fs = require("fs");
-const s3 = require("./s3");
+const s3 = require("s3-read-write");
 
 const baseDir = "./data";
 

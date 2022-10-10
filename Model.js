@@ -1,6 +1,6 @@
 // I really just made my own mongo-js. Cry face.
 
-const s3 = require("./s3");
+const s3 = require("s3-read-write");
 const generateID = require("./generateID");
 const fs = require("fs");
 
