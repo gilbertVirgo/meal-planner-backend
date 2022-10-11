@@ -5,7 +5,7 @@ import trash from "trash";
 
 const baseDir = "./data";
 
-module.exports = async () => {
+export default async () => {
 	const baseURL = path.resolve(__dirname, "data");
 
 	// if (fs.existsSync(baseURL))
