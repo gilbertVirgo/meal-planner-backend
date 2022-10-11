@@ -54,13 +54,13 @@ router.get("/plan", async (req, res, next) => {
 
 router.get("/plan/recipes", async (req, res, next) => {
 	const { recipes } = await Plan.findOne(defaultPlanId);
-	res.locals.data = await Recipe.find(recipes);
+	res.locals.data = await Recipe.find(recipes.flat(1));
 	next();
 });
 
 router.get("/plan/ingredients", async (req, res, next) => {
 	const plan = await Plan.findOne(defaultPlanId),
-		recipes = await Recipe.find(plan.recipes.filter((r) => !!r)),
+		recipes = await Recipe.find(plan.recipes.flat(1)),
 		ingredientIds = [
 			...new Set(
 				recipes
@@ -75,11 +75,13 @@ router.get("/plan/ingredients", async (req, res, next) => {
 
 router.get("/plan/checklist", async (req, res, next) => {
 	const plan = await Plan.findOne(defaultPlanId),
-		recipes = await Recipe.find(plan.recipes.filter((r) => !!r));
+		recipes = await Recipe.find(plan.recipes.flat(1));
 
 	res.locals.data = (function cleanIngredientsAndSortQuantities(dirty) {
 		const clean = [],
 			final = [];
+
+		console.log({ dirty });
 
 		dirty.forEach(({ title, id, amount, unit }) => {
 			const ingredientIndex = clean.findIndex((i) => i.id === id);
@@ -93,7 +95,7 @@ router.get("/plan/checklist", async (req, res, next) => {
 			const cleanQuantities = [];
 
 			dirtyQuantities.forEach(({ unit, amount }) => {
-				const quantityIndex = cleanQuantity.findIndex(
+				const quantityIndex = cleanQuantities.findIndex(
 					(q) => q.unit === unit
 				);
 
@@ -102,7 +104,7 @@ router.get("/plan/checklist", async (req, res, next) => {
 				else {
 					cleanQuantities[quantityIndex].amount =
 						parseInt(cleanQuantities[quantityIndex].amount) +
-						amount;
+						parseInt(amount);
 				}
 			});
 

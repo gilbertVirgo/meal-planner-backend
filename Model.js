@@ -52,7 +52,7 @@ export default function Model(fileName, frame) {
 	this.updateOne = async (updatedProps) => {
 		const { id } = updatedProps,
 			nodes = await this.find(),
-			node = await this.findOne(id);
+			node = nodes.find((n) => n.id === id);
 
 		Object.keys(updatedProps).forEach(
 			(key) => (node[key] = updatedProps[key])
@@ -63,6 +63,37 @@ export default function Model(fileName, frame) {
 		);
 
 		// Replace
+		await promises.writeFile(dataPath, patch, "utf-8").catch((err) => {
+			throw new Error(`Could not update node. ${err}`);
+		});
+
+		// await s3.write(patch, fileName);
+	};
+
+	this.updateMany = async (updatedPropsArray) => {
+		const nodes = await this.find(),
+			updatedNodes = [];
+
+		updatedPropsArray.forEach((updatedProps) => {
+			const { id } = updatedProps,
+				node = nodes.find((n) => n.id === id);
+
+			Object.keys(updatedProps).forEach(
+				(key) => (node[key] = updatedProps[key])
+			);
+
+			updatedNodes.push(node);
+		});
+
+		const patch = JSON.stringify(
+			nodes.map((n) => {
+				const updatedNode = updatedNodes.find((u) => u.id === n.id);
+				return updatedNode || n;
+			})
+		);
+
+		console.log("UPDATED", patch);
+
 		await promises.writeFile(dataPath, patch, "utf-8").catch((err) => {
 			throw new Error(`Could not update node. ${err}`);
 		});
