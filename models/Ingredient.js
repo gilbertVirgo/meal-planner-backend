@@ -1,8 +1,8 @@
-const Model = require("../Model");
+import Model from "../Model";
 
 let title, lastUsedUnit;
 
-module.exports = new Model("ingredients.json", {
+export default new Model("ingredients.json", {
 	title,
 	lastUsedUnit,
 });

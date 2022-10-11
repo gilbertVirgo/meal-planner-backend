@@ -1,5 +1,5 @@
-const Model = require("../Model");
+import Model from "../Model";
 let id,
 	recipes = Array(7).fill(null);
 
-module.exports = new Model("plan.json", { id, recipes });
+export default new Model("plan.json", { id, recipes });

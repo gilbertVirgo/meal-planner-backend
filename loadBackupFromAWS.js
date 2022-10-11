@@ -1,14 +1,17 @@
-const fs = require("fs");
-const s3 = require("s3-read-write");
+import fs from "fs";
+import path from "path";
+import s3 from "./s3";
+import trash from "trash";
 
 const baseDir = "./data";
 
 module.exports = async () => {
-	const baseURL = "./data";
+	const baseURL = path.resolve(__dirname, "data");
 
-	if (fs.existsSync(baseURL))
-		return console.log("Cancelled backup, since ./data exists.");
+	// if (fs.existsSync(baseURL))
+	// 	return console.log("Cancelled backup, since ./data exists.");
 
+	await trash(baseDir);
 	await fs.promises.mkdir(baseDir);
 
 	for (const file of ["plan", "recipes", "ingredients"]) {

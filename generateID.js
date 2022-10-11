@@ -1,3 +1,3 @@
-const crypto = require("crypto");
+import { randomUUID } from "crypto";
 
-module.exports = () => crypto.randomUUID();
+export default () => randomUUID();

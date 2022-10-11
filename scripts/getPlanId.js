@@ -1,6 +1,6 @@
-const { DateTime } = require("luxon");
+import { DateTime } from "luxon";
 
-module.exports = () => {
+export default () => {
 	const { weekNumber, year } = DateTime.local();
 
 	return `${year}-${weekNumber}`;

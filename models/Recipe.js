@@ -1,5 +1,5 @@
-const Model = require("../Model");
+import Model from "../Model";
 
 let title, ingredients;
 
-module.exports = new Model("recipes.json", { title, ingredients });
+export default new Model("recipes.json", { title, ingredients });
