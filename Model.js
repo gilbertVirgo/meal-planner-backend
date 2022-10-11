@@ -1,8 +1,8 @@
 // I really just made my own mongo-js. Cry face.
 
-import generateID from "./generateID";
+import generateID from "./generateID.js";
 import { promises } from "fs";
-import { write } from "./s3";
+import s3 from "./s3.js";
 
 export default function Model(fileName, frame) {
 	const dataPath = `./data/${fileName}`;
@@ -44,7 +44,7 @@ export default function Model(fileName, frame) {
 			throw new Error(`Could not create new node. ${err}`);
 		});
 
-		await write(patch, fileName);
+		await s3.write(patch, fileName);
 
 		return newNode;
 	};
@@ -67,6 +67,6 @@ export default function Model(fileName, frame) {
 			throw new Error(`Could not update node. ${err}`);
 		});
 
-		await write(patch, fileName);
+		await s3.write(patch, fileName);
 	};
 }

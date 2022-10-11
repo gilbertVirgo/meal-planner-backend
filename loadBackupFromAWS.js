@@ -1,7 +1,11 @@
+import { fileURLToPath } from "url";
 import fs from "fs";
 import path from "path";
-import s3 from "./s3";
+import s3 from "./s3.js";
 import trash from "trash";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const baseDir = "./data";
 

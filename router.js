@@ -1,69 +1,66 @@
-import { findOne as __findOne, updateOne } from "./models/Plan";
-import {
-	find as _find,
-	findOne as _findOne,
-	insertOne as _insertOne,
-} from "./models/Recipe";
-import { find, findOne, insertOne } from "./models/Ingredient";
-
+import Ingredient from "./models/Ingredient.js";
+import Plan from "./models/Plan.js";
+import Recipe from "./models/Recipe.js";
 import { Router } from "express";
 
 const router = Router();
 
 router.get("/recipes", async (req, res, next) => {
-	res.locals.data = await _find().catch(next);
+	res.locals.data = await Recipe.find().catch(next);
 	next();
 });
 
 router.get("/recipe/:id", async ({ params }, res, next) => {
-	res.locals.data = await _findOne(params.id).catch(next);
+	res.locals.data = await Recipe.findOne(params.id).catch(next);
 	next();
 });
 
 router.get("/recipe/:id/ingredients", async ({ params }, res, next) => {
-	const recipe = await _findOne(params.id).catch(next);
-	res.locals.data = await find(recipe.ingredients.map(({ id }) => id));
+	const recipe = await Recipe.findOne(params.id).catch(next);
+	res.locals.data = await Ingredient.find(
+		recipe.ingredients.map(({ id }) => id)
+	);
 	next();
 });
 
 router.put("/recipe", async ({ body }, res, next) => {
-	await _insertOne(body);
+	await Recipe.insertOne(body);
 	res.locals.data = undefined;
 	next();
 });
 
 router.get("/ingredients", async (req, res, next) => {
-	res.locals.data = await find().catch(next);
+	res.locals.data = await Ingredient.find().catch(next);
 	next();
 });
 
 router.put("/ingredient", async ({ body }, res, next) => {
-	await insertOne(body);
+	await Ingredient.insertOne(body);
 	res.locals.data = undefined;
 	next();
 });
 
 router.get("/ingredient/:id", async ({ params }, res, next) => {
-	res.locals.data = await findOne(params.id).catch(next);
+	res.locals.data = await Ingredient.findOne(params.id).catch(next);
 	next();
 });
 
 const defaultPlanId = "the-plan";
 
 router.get("/plan", async (req, res, next) => {
-	res.locals.data = await __findOne(defaultPlanId);
+	res.locals.data = await Plan.findOne(defaultPlanId);
 	next();
 });
 
 router.get("/plan/recipes", async (req, res, next) => {
-	const { recipes } = await __findOne(defaultPlanId);
-	res.locals.data = await _find(recipes);
+	const { recipes } = await Plan.findOne(defaultPlanId);
+	res.locals.data = await Recipe.find(recipes);
 	next();
 });
 
 router.get("/plan/ingredients", async (req, res, next) => {
-	const plan = await __findOne(defaultPlanId),
-		recipes = await _find(plan.recipes.filter((r) => !!r)),
+	const plan = await Plan.findOne(defaultPlanId),
+		recipes = await Recipe.find(plan.recipes.filter((r) => !!r)),
 		ingredientIds = [
 			...new Set(
 				recipes
@@ -72,13 +69,13 @@ router.get("/plan/ingredients", async (req, res, next) => {
 			),
 		];
 
-	res.locals.data = await find(ingredientIds);
+	res.locals.data = await Ingredient.find(ingredientIds);
 	next();
 });
 
 router.get("/plan/checklist", async (req, res, next) => {
-	const plan = await __findOne(defaultPlanId),
-		recipes = await _find(plan.recipes.filter((r) => !!r));
+	const plan = await Plan.findOne(defaultPlanId),
+		recipes = await Recipe.find(plan.recipes.filter((r) => !!r));
 
 	res.locals.data = (function cleanIngredientsAndSortQuantities(dirty) {
 		const clean = [],
@@ -125,7 +122,7 @@ router.get("/plan/checklist", async (req, res, next) => {
 });
 
 router.patch("/plan", async ({ body: { recipes } }, res, next) => {
-	await updateOne({ id: defaultPlanId, recipes });
+	await Plan.updateOne({ id: defaultPlanId, recipes });
 	res.locals.data = undefined;
 	next();
 });

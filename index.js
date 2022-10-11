@@ -1,11 +1,10 @@
+import "dotenv/config.js";
+
 import express, { json } from "express";
 
 import cors from "cors";
-import dotenv from "dotenv";
-import loadBackupFromAWS from "./loadBackupFromAWS";
-import router from "./router";
-
-dotenv.config();
+import loadBackupFromAWS from "./loadBackupFromAWS.js";
+import router from "./router.js";
 
 const app = express();
 app.use(json());

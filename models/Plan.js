@@ -1,4 +1,4 @@
-import Model from "../Model";
+import Model from "../Model.js";
 let id,
 	recipes = Array(7).fill(null);
 
