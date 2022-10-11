@@ -67,7 +67,7 @@ export default function Model(fileName, frame) {
 			throw new Error(`Could not update node. ${err}`);
 		});
 
-		// await s3.write(patch, fileName);
+		await s3.write(patch, fileName);
 	};
 
 	this.updateMany = async (updatedPropsArray) => {
