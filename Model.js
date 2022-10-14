@@ -92,8 +92,6 @@ export default function Model(fileName, frame) {
 			})
 		);
 
-		console.log("UPDATED", patch);
-
 		await promises.writeFile(dataPath, patch, "utf-8").catch((err) => {
 			throw new Error(`Could not update node. ${err}`);
 		});
