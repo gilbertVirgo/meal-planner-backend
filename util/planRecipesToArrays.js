@@ -5,9 +5,5 @@ import Plan from "../models/Plan.js";
 
 	const patch = { ...plan, recipes: recipes.map((r) => (r ? [r] : [])) };
 
-	// console.log(JSON.stringify(patch));
-
 	await Plan.updateOne(patch);
-
-	console.log("Done", patch);
 })();
