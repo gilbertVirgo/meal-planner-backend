@@ -12,9 +12,6 @@ const baseDir = "./data";
 export default async () => {
 	const baseURL = path.resolve(__dirname, "data");
 
-	// if (fs.existsSync(baseURL))
-	// 	return console.log("Cancelled backup, since ./data exists.");
-
 	await trash(baseDir);
 	await fs.promises.mkdir(baseDir);
 
