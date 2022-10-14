@@ -25,7 +25,7 @@ router.get("/recipe/:id/ingredients", async ({ params }, res, next) => {
 
 router.put("/recipe", async ({ body }, res, next) => {
 	await Recipe.insertOne(body);
-	res.locals.data = undefined;
+	res.locals.data = body;
 	next();
 });
 
@@ -36,7 +36,7 @@ router.get("/ingredients", async (req, res, next) => {
 
 router.put("/ingredient", async ({ body }, res, next) => {
 	await Ingredient.insertOne(body);
-	res.locals.data = undefined;
+	res.locals.data = body;
 	next();
 });
 
@@ -80,8 +80,6 @@ router.get("/plan/checklist", async (req, res, next) => {
 	res.locals.data = (function cleanIngredientsAndSortQuantities(dirty) {
 		const clean = [],
 			final = [];
-
-		console.log({ dirty });
 
 		dirty.forEach(({ title, id, amount, unit }) => {
 			const ingredientIndex = clean.findIndex((i) => i.id === id);
